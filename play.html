@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>+1 HEIGHT FLYING TESLA CLICKER</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#0b1020;font-family:"Trebuchet MS",system-ui,sans-serif;color:#fff;user-select:none}
+canvas{display:block;position:fixed;inset:0}
+.panel{background:rgba(10,16,36,.72);border:2px solid rgba(255,255,255,.18);border-radius:14px;padding:10px 14px;backdrop-filter:blur(6px)}
+#hud-top{position:fixed;top:12px;left:12px;display:flex;flex-direction:column;gap:8px}
+#coins{font-size:28px;font-weight:900;color:#ffd84a;text-shadow:0 2px 0 #7a5b00}
+#stats div{font-size:14px;line-height:1.5}
+#stats b{color:#7fe3ff}
+#hud-right{position:fixed;top:12px;right:12px;text-align:right;font-size:13px;line-height:1.6;max-width:260px}
+#alt{position:fixed;left:50%;top:14px;transform:translateX(-50%);text-align:center;font-weight:900;font-size:22px;text-shadow:0 2px 4px #000}
+#zone{font-size:13px;opacity:.8}
+#hint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);text-align:center;font-size:14px;opacity:.9}
+#toasts{position:fixed;left:50%;top:30%;transform:translateX(-50%);text-align:center;pointer-events:none}
+.toast{font-size:30px;font-weight:900;color:#fff;text-shadow:0 3px 0 #1b6dff,0 0 18px #4fc3ff;animation:pop 1.6s forwards}
+@keyframes pop{0%{transform:scale(.4);opacity:0}15%{transform:scale(1.2);opacity:1}30%{transform:scale(1)}100%{transform:translateY(-60px);opacity:0}}
+#plus{position:fixed;pointer-events:none;font-weight:900;font-size:26px;color:#7fff9a;text-shadow:0 2px 0 #0a5a22;animation:rise .9s forwards}
+@keyframes rise{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(-70px) scale(1.4)}}
+#shop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45)}
+#shop .box{width:min(920px,94vw);max-height:88vh;overflow:auto;padding:18px}
+#shop h2{margin:0 0 8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:14px}
+.card{background:rgba(255,255,255,.08);border-radius:10px;padding:10px}
+.card h4{margin:0 0 4px}.card p{margin:0 0 8px;font-size:12px;opacity:.8}
+button{font:inherit;font-weight:800;border:0;border-radius:8px;padding:7px 12px;background:#2f7cff;color:#fff;cursor:pointer}
+button:disabled{background:#444a5c;color:#999;cursor:not-allowed}
+button.gold{background:#e0a400;color:#201700}
+button.red{background:#d63a5a}
+#title{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#2358c8,#0b1020);text-align:center;z-index:10}
+#title h1{font-size:clamp(28px,6vw,64px);margin:0;text-shadow:0 5px 0 #0a2a80,0 0 30px #4fc3ff;letter-spacing:1px}
+#title p{max-width:560px;opacity:.9;line-height:1.5}
+#title button{font-size:24px;padding:14px 38px;margin-top:10px}
+kbd{background:#fff;color:#111;border-radius:4px;padding:1px 6px;font-weight:900}
+</style>
+</head>
+<body>
+<div id="hud-top">
+  <div class="panel"><div id="coins">0</div>
+  <div id="stats"></div></div>
+</div>
+<div id="alt"><div id="altv">0 m</div><div id="zone"></div></div>
+<div id="hud-right" class="panel"></div>
+<div id="hint"></div>
+<div id="toasts"></div>
+<div id="shop"><div class="box panel"></div></div>
+<div id="title">
+  <h1>+1 HEIGHT<br>FLYING TESLA CLICKER</h1>
+  <p>Mash <kbd>SPACE</kbd> to train. Drive with <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> up a ramp, flip in the air, hold <kbd>SPACE</kbd> to glide, land, get coins, upgrade, unlock cars, and rebirth!</p>
+  <button id="play">PLAY</button>
+</div>
+<script src="play.js"></script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>+1 HEIGHT FLYING TESLA CLICKER</title>
+<meta name="description" content="A free 3D browser game: train, drive, launch a Tesla-inspired car off ramps, flip, glide, and explore a dystopian city and deep space.">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#080d18">
+<link rel="canonical" href="https://ethankabiri.github.io/flying-tesla-clicker/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ethankabiri.github.io/flying-tesla-clicker/">
+<meta property="og:title" content="+1 HEIGHT FLYING TESLA CLICKER">
+<meta property="og:description" content="Train, drive, launch, flip, and glide through a neon city and deep space in this free 3D browser game.">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"VideoGame","name":"+1 HEIGHT FLYING TESLA CLICKER","description":"A free 3D browser game about training, driving, launching off ramps, flipping, gliding, and exploring a dystopian city and deep space.","gamePlatform":"Web browser","applicationCategory":"GameApplication","operatingSystem":"Any","url":"https://ethankabiri.github.io/flying-tesla-clicker/"}
+</script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#0b1020;font-family:"Trebuchet MS",system-ui,sans-serif;color:#fff;user-select:none}
+canvas{display:block;position:fixed;inset:0}
+.panel{background:rgba(10,16,36,.72);border:2px solid rgba(255,255,255,.18);border-radius:14px;padding:10px 14px;backdrop-filter:blur(6px)}
+#hud-top{position:fixed;top:12px;left:12px;display:flex;flex-direction:column;gap:8px}
+#coins{font-size:28px;font-weight:900;color:#ffd84a;text-shadow:0 2px 0 #7a5b00}
+#stats div{font-size:14px;line-height:1.5}
+#stats b{color:#7fe3ff}
+#hud-right{position:fixed;top:12px;right:12px;text-align:right;font-size:13px;line-height:1.6;max-width:260px}
+#alt{position:fixed;left:50%;top:14px;transform:translateX(-50%);text-align:center;font-weight:900;font-size:22px;text-shadow:0 2px 4px #000}
+#zone{font-size:13px;opacity:.8}
+#hint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);text-align:center;font-size:14px;opacity:.9}
+#toasts{position:fixed;left:50%;top:30%;transform:translateX(-50%);text-align:center;pointer-events:none}
+.toast{font-size:30px;font-weight:900;color:#fff;text-shadow:0 3px 0 #1b6dff,0 0 18px #4fc3ff;animation:pop 1.6s forwards}
+@keyframes pop{0%{transform:scale(.4);opacity:0}15%{transform:scale(1.2);opacity:1}30%{transform:scale(1)}100%{transform:translateY(-60px);opacity:0}}
+#plus{position:fixed;pointer-events:none;font-weight:900;font-size:26px;color:#7fff9a;text-shadow:0 2px 0 #0a5a22;animation:rise .9s forwards}
+@keyframes rise{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(-70px) scale(1.4)}}
+#shop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45)}
+#shop .box{width:min(920px,94vw);max-height:88vh;overflow:auto;padding:18px}
+#shop h2{margin:0 0 8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:14px}
+.card{background:rgba(255,255,255,.08);border-radius:10px;padding:10px}
+.card h4{margin:0 0 4px}.card p{margin:0 0 8px;font-size:12px;opacity:.8}
+button{font:inherit;font-weight:800;border:0;border-radius:8px;padding:7px 12px;background:#2f7cff;color:#fff;cursor:pointer}
+button:disabled{background:#444a5c;color:#999;cursor:not-allowed}
+button.gold{background:#e0a400;color:#201700}
+button.red{background:#d63a5a}
+#title{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#2358c8,#0b1020);text-align:center;z-index:10}
+#title h1{font-size:clamp(28px,6vw,64px);margin:0;text-shadow:0 5px 0 #0a2a80,0 0 30px #4fc3ff;letter-spacing:1px}
+#title p{max-width:560px;opacity:.9;line-height:1.5}
+#title button{font-size:24px;padding:14px 38px;margin-top:10px}
+kbd{background:#fff;color:#111;border-radius:4px;padding:1px 6px;font-weight:900}
+.panel{background:rgba(5,10,20,.9);border:1px solid rgba(110,218,255,.38);box-shadow:0 14px 44px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.06);backdrop-filter:blur(14px)}
+#hud-top{z-index:2;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));width:min(350px,calc(100vw - 24px))}
+#hud-top .panel{padding:13px 16px}
+#coins{font-size:clamp(24px,3vw,34px);line-height:1.1;color:#ffdf65;text-shadow:0 0 18px rgba(255,200,50,.34)}
+#stats div{font-size:clamp(13px,1.2vw,15px);line-height:1.65;color:#f3f7ff}
+#stats b{color:#80eaff}
+#hud-right{z-index:2;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));max-width:min(310px,calc(100vw - 24px));padding:14px 17px;font-size:14px;line-height:1.8;color:#f4f7ff}
+#alt{z-index:2;top:14px;width:min(340px,calc(100vw - 24px));padding:9px 15px 10px;border:1px solid rgba(126,222,255,.25);border-radius:14px;background:rgba(5,10,20,.82);backdrop-filter:blur(10px);font-size:clamp(20px,2.7vw,30px)}
+#space-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:2px;color:#9fb7cc;font-size:9px;line-height:1.4;letter-spacing:.12em;text-shadow:none}
+#space-tier{color:#80eaff;font-weight:900}
+#space-distance{color:#dcecff;font-weight:800;letter-spacing:.04em;white-space:nowrap}
+#altv{font-size:clamp(22px,3vw,32px);line-height:1.06;color:#f6fbff}
+#zone{margin-top:3px;font-size:11px;font-weight:700;color:#c0d7ea}
+#space-progress{height:4px;margin-top:8px;overflow:hidden;border-radius:5px;background:rgba(255,255,255,.12)}
+#space-meter{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#4be9f4,#9effb7 55%,#ffe27b);box-shadow:0 0 12px rgba(85,236,255,.66);transition:width .2s ease}
+#hint{z-index:2;bottom:max(14px,env(safe-area-inset-bottom));padding:9px 15px;border:1px solid rgba(126,222,255,.26);border-radius:12px;background:rgba(5,10,20,.82);font-size:clamp(12px,1.4vw,15px);line-height:1.6;color:#f6f8fc;backdrop-filter:blur(10px);max-width:calc(100vw - 24px)}
+#shop{z-index:5;background:rgba(2,5,12,.76);backdrop-filter:blur(8px)}
+#shop .box{background:rgba(6,11,22,.96)}
+.card{border:1px solid rgba(130,210,255,.16);background:rgba(255,255,255,.07)}
+button{transition:transform .16s ease,filter .16s ease,box-shadow .16s ease}
+button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.13);box-shadow:0 8px 24px rgba(35,137,255,.3)}
+button:focus-visible{outline:3px solid #9df1ff;outline-offset:3px}
+#title{padding:clamp(14px,4vw,48px);overflow:auto;text-align:left;background:linear-gradient(115deg,rgba(3,7,15,.78),rgba(7,14,27,.68) 52%,rgba(12,7,25,.76)),radial-gradient(ellipse at 78% 30%,rgba(20,133,166,.3),transparent 48%);backdrop-filter:blur(2px)}
+.title-shell{width:min(1160px,100%);margin:auto;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(340px,.88fr);gap:clamp(20px,4vw,48px);align-items:center;padding:clamp(20px,4vw,44px);border:1px solid rgba(116,226,255,.34);border-radius:24px;background:linear-gradient(140deg,rgba(6,13,25,.88),rgba(8,16,30,.76));box-shadow:0 30px 100px rgba(0,0,0,.5),inset 0 0 50px rgba(38,174,212,.06);backdrop-filter:blur(16px)}
+.title-copy{min-width:0}
+.eyebrow{margin-bottom:12px;color:#83edff;font-size:12px;font-weight:900;letter-spacing:.2em}
+#title h1{font-size:clamp(37px,5.1vw,70px);line-height:.98;letter-spacing:-.045em;text-shadow:0 4px 24px rgba(43,200,255,.28)}
+#title h1 span{color:#9beeff}
+.title-lede{max-width:600px;margin:18px 0 20px;color:#e2ebf8;font-size:clamp(15px,1.5vw,18px);line-height:1.6}
+.flight-keys{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.flight-keys span{padding:8px 10px;border:1px solid rgba(177,220,244,.18);border-radius:9px;background:rgba(255,255,255,.06);font-size:13px;color:#eaf5ff}
+.flight-keys kbd{padding:2px 6px;border-radius:5px;background:#dff7ff;color:#111827;font-size:12px}
+#title button{min-height:54px;margin-top:2px;padding:13px 24px;border:1px solid rgba(167,247,255,.48);border-radius:12px;background:linear-gradient(110deg,#1478d4,#10b8c4);box-shadow:0 10px 30px rgba(0,160,230,.27);font-size:17px;letter-spacing:.04em}
+.title-disclaimer{display:block;margin-top:11px;color:#aebdd0;font-size:11px;line-height:1.5}
+.launch-gallery{display:grid;grid-template-columns:minmax(115px,.72fr) minmax(190px,1.28fr);gap:12px;align-items:stretch}
+.portrait-card,.prototype-card{overflow:hidden;border:1px solid rgba(133,223,255,.24);border-radius:15px;background:rgba(11,20,34,.88);box-shadow:0 12px 30px rgba(0,0,0,.28)}
+.portrait-card{display:flex;flex-direction:column;margin:0}
+.portrait-card img{display:block;width:100%;height:clamp(170px,24vw,270px);object-fit:cover;object-position:50% 25%;filter:saturate(.78) contrast(1.05)}
+.portrait-caption{padding:11px 12px}
+.portrait-caption strong,.portrait-caption span{display:block}
+.portrait-caption strong{font-size:14px;color:#fff}
+.portrait-caption span{margin-top:4px;color:#b5c8dc;font-size:10px;line-height:1.45}
+.photo-credit{display:block;padding:0 12px 10px;color:#9eb0c4;font-size:9px;line-height:1.45}
+.photo-credit a{color:#86e9ff}
+.prototype-card{display:flex;flex-direction:column;justify-content:space-between;padding:12px}
+.prototype-kicker{display:block;color:#ffdb7d;font-size:9px;font-weight:900;letter-spacing:.12em;line-height:1.5}
+.prototype-card h2{margin:5px 0;color:#f6fbff;font-size:16px}
+.prototype-card svg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 6px 16px rgba(0,212,255,.18))}
+.prototype-note{margin:5px 0 0;color:#b7c9dc;font-size:11px;line-height:1.5}
+@media(max-width:760px){
+  #title{align-items:flex-start}
+  .title-shell{grid-template-columns:1fr;gap:18px;margin:auto;padding:18px}
+  #title h1{font-size:clamp(34px,10vw,56px)}
+  .launch-gallery{grid-template-columns:minmax(100px,.72fr) minmax(170px,1.28fr)}
+  .portrait-card img{height:155px}
+  #hud-right{top:auto;bottom:56px;right:10px;max-width:190px;font-size:11px;line-height:1.6}
+  #hud-top{width:min(270px,calc(100vw - 20px));top:10px;left:10px}
+  #hud-top .panel{padding:10px 12px}
+  #stats div{font-size:12px}
+  #alt{top:clamp(135px,30vh,220px);bottom:auto;font-size:18px}
+}
+@media(max-width:420px){
+  .title-shell{padding:14px}
+  .launch-gallery{grid-template-columns:1fr 1.3fr;gap:8px}
+  .portrait-card img{height:125px}
+  .prototype-card{padding:9px}
+  .flight-keys span{font-size:11px}
+  #hud-right{max-width:160px;padding:8px 10px}
+}
+#shop .box{width:min(1120px,96vw);max-height:94vh;padding:0;border:1px solid rgba(111,225,255,.35);border-radius:20px}
+.shop-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 24px 16px;border-bottom:1px solid rgba(140,210,240,.14);background:linear-gradient(110deg,rgba(8,24,40,.98),rgba(12,17,35,.98))}
+.shop-kicker{color:#70e5f7;font-size:10px;font-weight:900;letter-spacing:.18em}
+.shop-header h2{margin:5px 0;font-size:clamp(22px,3vw,30px);letter-spacing:-.03em}
+.shop-header p{margin:0;color:#b8c8d9;font-size:13px}
+.shop-wallet{display:flex;align-items:center;gap:14px;white-space:nowrap}
+.shop-wallet b{color:#ffe278;font-size:18px}
+.shop-tabs{position:sticky;top:0;z-index:4;display:flex;gap:8px;overflow-x:auto;padding:11px 22px;border-bottom:1px solid rgba(140,210,240,.14);background:rgba(6,12,23,.97);backdrop-filter:blur(14px)}
+.shop-tabs button{flex:none;border:1px solid rgba(114,210,239,.22);background:rgba(255,255,255,.06);color:#dcecff}
+.shop-tabs button:hover{background:rgba(24,155,194,.24)}
+.shop-section{padding:20px 24px 24px;border-bottom:1px solid rgba(140,210,240,.14);scroll-margin-top:62px}
+.section-heading{display:flex;align-items:center;gap:13px;margin:0 0 17px}
+.section-heading>span{display:grid;place-items:center;width:42px;height:42px;border:1px solid rgba(94,230,255,.42);border-radius:12px;background:rgba(12,171,199,.12);color:#7ceaff;font-weight:900}
+.section-heading h3{margin:0;font-size:21px}
+.section-heading p{margin:4px 0 0;color:#aebfd3;font-size:12px}
+.shop-subheading{margin:20px 0 10px;color:#9deaff;font-size:13px;text-transform:uppercase;letter-spacing:.1em}
+.shop-subheading small{color:#aebfd3;font-size:11px;text-transform:none;letter-spacing:0}
+.upgrade-card{position:relative;min-height:174px;padding:14px 14px 12px 62px}
+.upgrade-card h4{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.upgrade-card h4 small{color:#a9c6d9;white-space:nowrap}
+.upgrade-card p{min-height:36px}
+.upgrade-card button{margin-top:5px}
+.card-symbol{position:absolute;top:15px;left:14px;display:grid;place-items:center;width:36px;height:36px;border:1px solid rgba(96,222,255,.28);border-radius:10px;background:rgba(23,173,204,.12);color:#84efff;font-size:20px;font-weight:900}
+.vehicle-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.vehicle-card{overflow:hidden;padding:0;border-radius:14px;background:linear-gradient(150deg,rgba(15,27,43,.92),rgba(8,14,27,.92));transition:border-color .16s ease,transform .16s ease,box-shadow .16s ease}
+.vehicle-card:hover{transform:translateY(-3px);border-color:rgba(89,226,255,.56);box-shadow:0 12px 30px rgba(0,0,0,.3)}
+.vehicle-card.is-equipped{border-color:rgba(91,235,199,.72);box-shadow:inset 0 0 26px rgba(43,220,185,.08)}
+.vehicle-card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 12px 7px}
+.vehicle-role,.vehicle-status{color:#91e5f5;font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.vehicle-status{color:#b2c3d5;text-align:right}
+.vehicle-card.is-equipped .vehicle-status{color:#74edcb}
+.vehicle-preview{display:block;width:100%;height:142px;object-fit:contain;background:radial-gradient(ellipse at 50% 65%,rgba(0,170,205,.16),transparent 58%),#091321;border-top:1px solid rgba(115,208,235,.12);border-bottom:1px solid rgba(115,208,235,.12)}
+.vehicle-card>h4{margin:12px 13px 4px;font-size:17px}
+.vehicle-body-label{padding:0 13px 9px;color:#88b6ca;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.vehicle-stats{display:flex;flex-wrap:wrap;gap:6px;padding:0 13px 12px}
+.vehicle-stats span{padding:5px 7px;border:1px solid rgba(141,194,224,.13);border-radius:6px;background:rgba(255,255,255,.045);color:#aebfd1;font-size:10px}
+.vehicle-stats b{color:#eaf7ff}
+.vehicle-card>button{width:calc(100% - 26px);margin:0 13px 13px}
+.vehicle-asset-note{margin:0;padding:14px 16px;border:1px solid rgba(120,210,240,.18);border-radius:10px;background:rgba(255,255,255,.035);color:#afc1d4;font-size:11px;line-height:1.65}
+.vehicle-asset-note b{color:#e7f6ff}
+.vehicle-asset-note a{color:#81e8ff}
+.prestige-card{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px;background:linear-gradient(110deg,rgba(93,35,107,.23),rgba(255,255,255,.045))}
+.prestige-card p{margin:7px 0 0;color:#d6e2ef;font-size:13px;line-height:1.6}
+.prestige-card button{flex:none}
+.record-card{min-height:88px}
+.record-card.is-complete{border-color:rgba(79,225,170,.35);background:rgba(34,135,103,.1)}
+.record-card h4{font-size:13px;line-height:1.4}
+.record-card p{margin-top:8px;color:#ffe278}
+.wipe-row{text-align:right;margin:18px 0 0}
+@media(max-width:600px){
+  #shop .box{width:100vw;max-height:96vh;border-radius:16px}
+  .shop-header{align-items:flex-start;padding:16px}
+  .shop-header p{max-width:250px;line-height:1.45}
+  .shop-wallet{flex-direction:column;align-items:flex-end;gap:8px}
+  .shop-wallet b{font-size:14px}
+  .shop-section{padding:17px 15px 20px}
+  .shop-tabs{padding:9px 12px}
+  .shop-tabs button{padding:7px 9px;font-size:11px}
+  .section-heading h3{font-size:18px}
+  .vehicle-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+  .prestige-card{align-items:flex-start;flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div id="hud-top">
+  <div class="panel"><div id="coins">0</div>
+  <div id="stats"></div></div>
+</div>
+<div id="alt">
+  <div id="space-head"><span id="space-tier">CITY SKY</span><span id="space-distance">0 / 1B m</span></div>
+  <div id="altv">0 m</div>
+  <div id="zone"></div>
+  <div id="space-progress" role="progressbar" aria-label="Progress toward one billion metres" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="space-meter"></span></div>
+</div>
+<div id="hud-right" class="panel"></div>
+<div id="hint"></div>
+<div id="toasts"></div>
+<div id="shop"><div class="box panel"></div></div>
+<div id="title">
+  <div class="title-shell">
+    <section class="title-copy">
+      <div class="eyebrow">NEON CITY // FLIGHT TEST 001</div>
+      <h1>+1 HEIGHT<br><span>FLYING TESLA</span><br>CLICKER</h1>
+      <p class="title-lede">A billionaire said “the future is electric.” We heard “put a ramp on it.” Train, launch, flip, glide, and try to land like you meant to do that.</p>
+      <div class="flight-keys">
+        <span><kbd>W A S D</kbd> drive & steer</span>
+        <span><kbd>SPACE</kbd> train / glide</span>
+        <span><kbd>B</kbd> upgrades & cars</span>
+      </div>
+      <button id="play">START TEST FLIGHT <span aria-hidden="true">↗</span></button>
+      <small class="title-disclaimer">Unofficial parody game. No real flying Tesla has been announced; this prototype runs on optimism and a suspiciously large ramp.</small>
+    </section>
+    <section class="launch-gallery" aria-label="Flight test briefing">
+      <figure class="portrait-card">
+        <img src="%BASE_URL%elon-musk-royal-society.jpg" alt="Elon Musk at the Royal Society in 2018">
+        <figcaption class="portrait-caption">
+          <strong>ELON MUSK</strong>
+          <span>REAL PHOTO. VERY UNREAL FLIGHT PLAN.</span>
+        </figcaption>
+        <small class="photo-credit">Photo: The Royal Society / Debbie Rowe, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noreferrer">CC BY-SA 3.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Elon_Musk_Royal_Society.jpg" target="_blank" rel="noreferrer">source</a></small>
+      </figure>
+      <article class="prototype-card">
+        <div>
+          <span class="prototype-kicker">UNOFFICIAL CONCEPT // NOT A REAL ANNOUNCEMENT</span>
+          <h2>THE FLYING TESLA*</h2>
+        </div>
+        <svg viewBox="0 0 420 220" role="img" aria-label="Original illustration of a fictional Tesla-inspired flying car">
+          <defs>
+            <linearGradient id="carPaint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8fbff"/><stop offset=".42" stop-color="#8fa9c4"/><stop offset="1" stop-color="#25364a"/></linearGradient>
+            <linearGradient id="wingGlow" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#a447ff"/><stop offset=".5" stop-color="#3ef3ff"/><stop offset="1" stop-color="#a447ff"/></linearGradient>
+            <radialGradient id="hoverGlow"><stop stop-color="#39efff" stop-opacity=".75"/><stop offset="1" stop-color="#39efff" stop-opacity="0"/></radialGradient>
+          </defs>
+          <ellipse cx="212" cy="178" rx="165" ry="22" fill="url(#hoverGlow)"/>
+          <path d="M82 132 26 114 30 105 115 111 146 96 275 98 315 116 388 110 394 121 326 139 284 146 126 146Z" fill="#162637" stroke="url(#wingGlow)" stroke-width="4"/>
+          <path d="M95 132q14-36 57-48l48-27q14-8 31-6l53 14q26 7 43 42l30 19q8 5 5 14l-7 15H83l-4-10q-2-9 16-13Z" fill="url(#carPaint)" stroke="#e3f6ff" stroke-width="3"/>
+          <path d="m163 84 38-22q10-6 25-3l44 12q16 5 28 30H145Z" fill="#091522" stroke="#58dfff" stroke-width="3"/>
+          <path d="M111 127h230" stroke="#fff" stroke-opacity=".44" stroke-width="2"/>
+          <path d="M344 119h28l10 7-25 8h-24Z" fill="#d9faff"/>
+          <path d="M86 130h34l-10 12H78Z" fill="#ff4159"/>
+          <circle cx="141" cy="149" r="22" fill="#080b10" stroke="#92a7bc" stroke-width="5"/>
+          <circle cx="141" cy="149" r="9" fill="#47e8ff"/>
+          <circle cx="302" cy="149" r="22" fill="#080b10" stroke="#92a7bc" stroke-width="5"/>
+          <circle cx="302" cy="149" r="9" fill="#47e8ff"/>
+          <path d="M122 178v-15m160 15v-15" stroke="#5ff5ff" stroke-width="5" stroke-linecap="round"/>
+          <path d="M199 106h24m-12-9v20" stroke="#f4fbff" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <p class="prototype-note">*Range: one very long ramp. Landing system: “we’ll patch it later.”</p>
+      </article>
+    </section>
+  </div>
+</div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

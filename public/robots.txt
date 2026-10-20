@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ethankabiri.github.io/flying-tesla-clicker/sitemap.xml
